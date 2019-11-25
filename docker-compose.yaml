@@ -6,8 +6,8 @@ services:
     working_dir: /app
     restart: always
     ports:
-      - "8081:8081"
+      - "3000:3000"
     volumes:
       - ./app:/app
     environment:
-      PORT: "8081"
+      PORT: "3000"

@@ -13,6 +13,10 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "serve": "NODE_ENV=production next start",
+    "start": "next start",
+    "clean": "rm -rf node_modules .next",
+    "docker:build": "docker build . -t client",
+    "docker:run": "docker run client"
   }
 }
