@@ -23,4 +23,4 @@ COPY --from=gcr.io/berglas/berglas:latest /bin/berglas /bin/berglas
 
 # CMD npm run serve
 
-ENTRYPOINT exec /bin/berglas exec -- npm run serve
+ENTRYPOINT exec /bin/berglas exec -- npm run start
