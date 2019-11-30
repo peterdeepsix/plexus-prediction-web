@@ -6,11 +6,6 @@ import getConfig from 'next/config'
 const { publicRuntimeConfig } = getConfig()
 const { apiKey, authDomain, projectId, appId } = publicRuntimeConfig
 
-console.log(apiKey)
-console.log(authDomain)
-console.log(projectId)
-console.log(appId)
-
 // Add your Firebase credentials
 if (!firebase.apps.length) {
     firebase.initializeApp({
