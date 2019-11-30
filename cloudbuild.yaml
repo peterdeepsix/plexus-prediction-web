@@ -13,7 +13,7 @@ steps:
         "beta",
         "run",
         "deploy",
-        "web",
+        "$BRANCH_NAME",
         "--image=gcr.io/$PROJECT_ID/web:$SHORT_SHA",
         "--memory=1G",
         "--region=us-central1",
