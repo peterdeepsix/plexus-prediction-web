@@ -22,5 +22,5 @@ module.exports = {
         appId: process.env.appId,
         measurementId: process.env.measurementId,
     },
-}
+}\
 

@@ -19,6 +19,14 @@ steps:
         "--region=us-central1",
         "--platform=managed",
         "--allow-unauthenticated"
+        "--set-env-vars", "apiKey=berglas://berglas-secrets-$PROJECT_ID/apiKey", "apiKey=berglas://berglas-secrets-$PROJECT_ID/apiKey",
+        "--set-env-vars", "authDomain=berglas://berglas-secrets-$PROJECT_ID/authDomain", "authDomain=berglas://berglas-secrets-$PROJECT_ID/authDomain",
+        "--set-env-vars", "databaseURL=berglas://berglas-secrets-$PROJECT_ID/databaseURL", "databaseURL=berglas://berglas-secrets-$PROJECT_ID/databaseURL",
+        "--set-env-vars", "projectId=berglas://berglas-secrets-$PROJECT_ID/projectId", "projectId=berglas://berglas-secrets-$PROJECT_ID/projectId",
+        "--set-env-vars", "storageBucket=berglas://berglas-secrets-$PROJECT_ID/storageBucket", "storageBucket=berglas://berglas-secrets-$PROJECT_ID/storageBucket",
+        "--set-env-vars", "messagingSenderId=berglas://berglas-secrets-$PROJECT_ID/messagingSenderId", "messagingSenderId=berglas://berglas-secrets-$PROJECT_ID/messagingSenderId",
+        "--set-env-vars", "appId=berglas://berglas-secrets-$PROJECT_ID/appId", "appId=berglas://berglas-secrets-$PROJECT_ID/appId",
+        "--set-env-vars", "measurementId=berglas://berglas-secrets-$PROJECT_ID/measurementId", "measurementId=berglas://berglas-secrets-$PROJECT_ID/measurementId",
       ]
 images:
   - gcr.io/$PROJECT_ID/web
