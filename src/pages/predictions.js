@@ -1,15 +1,41 @@
-import React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Link from '../components/Link';
+// Main
+import React, { useState } from 'react';
+import axios from 'axios';
 
+// Libs
 import { useAuth } from "../lib/use-auth";
 
+// Components
+import Link from '../components/Link';
+
+// Material-ui
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import Container from '@material-ui/core/Container';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+
+// Material-ui styles
+const useStyles = makeStyles(theme => ({
+  input: {
+    display: 'none',
+  },
+}));
+
 export default function Predictions() {
+  const classes = useStyles();
   // Get auth state and re-render anytime it changes
   const auth = useAuth();
+
+  const [selectedFiles, setSelectedFiles] = useState(null);
+
+  const handleChange = event => {
+    const files = event.target.files;
+    setSelectedFiles(files)
+    console.log(files)
+  }
   return (
     <Container maxWidth="sm">
       <Box my={4}>
@@ -17,20 +43,32 @@ export default function Predictions() {
           Predictions
         </Typography>
         {auth.user ? (
-          <Fragment>
+          <React.Fragment>
             <Typography variant="body1" gutterBottom>
               {auth.user.email} is signed in.
             </Typography>
-          </Fragment>
+          </React.Fragment>
         ) : (
-            <Typography variant="body1" gutterBottom>
-              No user is currently signed in.
-        </Typography>
+            <React.Fragment>
+              <input
+                accept="image/*"
+                className={classes.input}
+                id="contained-button-file"
+                multiple
+                type="file"
+                onChange={handleChange}
+              />
+              <label htmlFor="contained-button-file">
+                <Button variant="contained" color="primary" component="span">
+                  Upload Images
+                </Button>
+              </label>
+            </React.Fragment>
           )}
         <Button variant="contained" color="primary" component={Link} naked href="/">
           Go to the index page
         </Button>
       </Box>
-    </Container>
+    </Container >
   );
 }

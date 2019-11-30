@@ -2,13 +2,22 @@ import React, { useState, useEffect, useContext, createContext } from "react";
 import * as firebase from "firebase/app";
 import "firebase/auth";
 
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
+const { apiKey, authDomain, projectId, appId } = publicRuntimeConfig
+
+console.log(apiKey)
+console.log(authDomain)
+console.log(projectId)
+console.log(appId)
+
 // Add your Firebase credentials
 if (!firebase.apps.length) {
     firebase.initializeApp({
-        apiKey: "AIzaSyCITfRPbej1XAY9Nb4Tdxgt56m7Z0XvGU8",
-        authDomain: "plexus-prediction.firebaseapp.com",
-        projectId: "plexus-prediction",
-        appID: "1:50381343406:web:d97b494b7fd7bf7c5cbb3f"
+        apiKey: apiKey,
+        authDomain: authDomain,
+        projectId: projectId,
+        appId: appId
     });
 }
 
