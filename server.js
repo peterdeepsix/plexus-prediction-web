@@ -1,5 +1,6 @@
 const express = require('express')
 const session = require('express-session')
+const cors = require('cors');
 const bodyParser = require('body-parser')
 const FileStore = require('session-file-store')(session)
 const next = require('next')
@@ -32,7 +33,9 @@ const firebase = admin.initializeApp(
 app.prepare().then(() => {
     const server = express()
 
+    server.use(cors());
     server.use(bodyParser.json())
+
     server.use(
         session({
             secret: 'geheimnis',
