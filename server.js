@@ -19,18 +19,19 @@ app.prepare().then(() => {
     const { type, project_id, private_key_id, private_key, client_email, client_id, auth_uri, token_uri, auth_provider_x509_cert_url, client_x509_cert_url } = serverRuntimeConfig
     const firebase = admin.initializeApp(
         {
-            credential: admin.credential.cert({
-                "type": type,
-                "project_id": project_id,
-                "private_key_id": private_key_id,
-                "private_key": private_key,
-                "client_email": client_email,
-                "client_id": client_id,
-                "auth_uri": auth_uri,
-                "token_uri": token_uri,
-                "auth_provider_x509_cert_url": auth_provider_x509_cert_url,
-                "client_x509_cert_url": client_x509_cert_url
-            }
+            credential: admin.credential.cert(
+                {
+                    "type": type,
+                    "project_id": project_id,
+                    "private_key_id": private_key_id,
+                    "private_key": private_key,
+                    "client_email": client_email,
+                    "client_id": client_id,
+                    "auth_uri": auth_uri,
+                    "token_uri": token_uri,
+                    "auth_provider_x509_cert_url": auth_provider_x509_cert_url,
+                    "client_x509_cert_url": client_x509_cert_url
+                }
             ),
         },
         'server'
