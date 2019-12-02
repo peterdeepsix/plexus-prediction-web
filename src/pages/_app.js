@@ -1,12 +1,76 @@
-import React from 'react';
+import React, { Component } from 'react'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+import 'isomorphic-unfetch'
 import App from 'next/app';
 import Head from 'next/head';
+import Router from 'next/router';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../config/theme';
+import UserContext from '../lib/UserContext'
+
+
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
+const { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId } = publicRuntimeConfig
+
 
 export default class MyApp extends App {
+  static async getInitialProps({ req, query }) {
+    const user = req && req.session ? req.session.decodedToken : null
+    // don't fetch anything from firebase if the user is not found
+    // const snap = user && await req.firebaseServer.database().ref('messages').once('value')
+    // const messages = snap && snap.val()
+    const messages = null
+    return { user, messages }
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      user: this.props.user,
+    }
+  }
   componentDidMount() {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: apiKey,
+        authDomain: authDomain,
+        databaseURL: databaseURL,
+        projectId: projectId,
+        storageBucket: storageBucket,
+        messagingSenderId: messagingSenderId,
+        appId: appId,
+        measurementId: measurementId
+      })
+    }
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({ user: user })
+        return user
+          .getIdToken()
+          .then(token => {
+            // eslint-disable-next-line no-undef
+            return fetch('/api/login', {
+              method: 'POST',
+              // eslint-disable-next-line no-undef
+              headers: new Headers({ 'Content-Type': 'application/json' }),
+              credentials: 'same-origin',
+              body: JSON.stringify({ token }),
+            })
+          })
+      } else {
+        this.setState({ user: null })
+        // eslint-disable-next-line no-undef
+        fetch('/api/logout', {
+          method: 'POST',
+          credentials: 'same-origin',
+        })
+      }
+    })
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
     if (jssStyles) {
@@ -14,11 +78,19 @@ export default class MyApp extends App {
     }
   }
 
+  handleLogin = () => {
+    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
+  };
+
+  handleLogout = () => {
+    firebase.auth().signOut()
+  };
+
   render() {
     const { Component, pageProps } = this.props;
 
     return (
-      <React.Fragment>
+      <UserContext.Provider value={{ user: this.state.user, handleLogin: this.handleLogin, handleLogout: this.handleLogout }}>
         <Head>
           <title>Plexus Prediction Engine </title>
         </Head>
@@ -27,7 +99,7 @@ export default class MyApp extends App {
           <CssBaseline />
           <Component {...pageProps} />
         </ThemeProvider>
-      </React.Fragment>
+      </UserContext.Provider>
     );
   }
 }
