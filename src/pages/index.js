@@ -3,13 +3,16 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'isomorphic-unfetch'
-// import fetch from 'isomorphic-unfetch'
 
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Link from '../components/Link';
+
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
+const { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId } = publicRuntimeConfig
 
 export default class Index extends Component {
   static async getInitialProps({ req, query }) {
@@ -36,17 +39,16 @@ export default class Index extends Component {
   }
 
   componentDidMount() {
-    // Add your Firebase credentials
     if (!firebase.apps.length) {
       firebase.initializeApp({
-        apiKey: "AIzaSyDPXTzBCOsuTu8-4J39dN5GcLoe3s8CrBI",
-        authDomain: "plexus-1d216.firebaseapp.com",
-        databaseURL: "https://plexus-1d216.firebaseio.com",
-        projectId: "plexus-1d216",
-        storageBucket: "plexus-1d216.appspot.com",
-        messagingSenderId: "602861693791",
-        appId: "1:602861693791:web:1d32bad317b03dcf76a4ea",
-        measurementId: "G-YF8YEYQCGB"
+        apiKey: apiKey,
+        authDomain: authDomain,
+        databaseURL: databaseURL,
+        projectId: projectId,
+        storageBucket: storageBucket,
+        messagingSenderId: messagingSenderId,
+        appId: appId,
+        measurementId: measurementId
       })
     }
 
