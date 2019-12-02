@@ -5,9 +5,6 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../config/theme';
 
-// Auth hook
-import { ProvideAuth } from "../lib/use-auth";
-
 export default class MyApp extends App {
   componentDidMount() {
     // Remove the server-side injected CSS.
@@ -21,7 +18,7 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props;
 
     return (
-      <ProvideAuth>
+      <React.Fragment>
         <Head>
           <title>Plexus Prediction Engine </title>
         </Head>
@@ -30,7 +27,7 @@ export default class MyApp extends App {
           <CssBaseline />
           <Component {...pageProps} />
         </ThemeProvider>
-      </ProvideAuth>
+      </React.Fragment>
     );
   }
 }

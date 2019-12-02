@@ -2,9 +2,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-// Libs
-import { useAuth } from "../lib/use-auth";
-
 // Components
 import Link from '../components/Link';
 
@@ -26,8 +23,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function Predictions() {
   const classes = useStyles();
-  // Get auth state and re-render anytime it changes
-  const auth = useAuth();
 
   const [selectedFiles, setSelectedFiles] = useState(null);
 
@@ -42,29 +37,21 @@ export default function Predictions() {
         <Typography variant="h4" component="h1" gutterBottom>
           Predictions
         </Typography>
-        {auth.user ? (
-          <React.Fragment>
-            <Typography variant="body1" gutterBottom>
-              {auth.user.email} is signed in.
-            </Typography>
-          </React.Fragment>
-        ) : (
-            <React.Fragment>
-              <input
-                accept="image/*"
-                className={classes.input}
-                id="contained-button-file"
-                multiple
-                type="file"
-                onChange={handleChange}
-              />
-              <label htmlFor="contained-button-file">
-                <Button variant="contained" color="primary" component="span">
-                  Upload Images
+        <React.Fragment>
+          <input
+            accept="image/*"
+            className={classes.input}
+            id="contained-button-file"
+            multiple
+            type="file"
+            onChange={handleChange}
+          />
+          <label htmlFor="contained-button-file">
+            <Button variant="contained" color="primary" component="span">
+              Upload Images
                 </Button>
-              </label>
-            </React.Fragment>
-          )}
+          </label>
+        </React.Fragment>
         <Button variant="contained" color="primary" component={Link} naked href="/">
           Go to the index page
         </Button>
