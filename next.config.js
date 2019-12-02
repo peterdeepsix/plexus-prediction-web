@@ -1,8 +1,7 @@
 require('dotenv').config()
 const webpack = require('webpack')
 
-const pks = '-----BEGIN PRIVATE KEY-----\n'
-const pke = '\n-----END PRIVATE KEY-----\n'
+const private_key = `-----BEGIN PRIVATE KEY-----\n${process.env.private_key}\n-----END PRIVATE KEY-----\n`
 
 // next.config.js
 module.exports = {
@@ -16,7 +15,7 @@ module.exports = {
         type: process.env.type,
         project_id: process.env.project_id,
         private_key_id: process.env.private_key_id,
-        private_key: (`${pks}${process.env.private_key}${pke}`).replace(/\\n/g, '\n'),
+        private_key: private_key.replace(/\\n/g, '\n'),
         // private_key: process.env.private_key.replace(/\\n/g, '\n'),
         client_email: process.env.client_email,
         client_id: process.env.client_id,
