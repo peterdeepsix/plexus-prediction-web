@@ -1,8 +1,6 @@
 require('dotenv').config()
 const webpack = require('webpack')
 
-const private_key = `-----BEGIN PRIVATE KEY-----\${process.env.private_key}-----END PRIVATE KEY-----\n`
-
 // next.config.js
 module.exports = {
     webpack: (config) => {
@@ -15,7 +13,7 @@ module.exports = {
         type: process.env.type,
         project_id: process.env.project_id,
         private_key_id: process.env.private_key_id,
-        private_key: private_key.replace(/\\n/g, '\n'),
+        private_key: process.env.private_key,
         client_email: process.env.client_email,
         client_id: process.env.client_id,
         auth_uri: process.env.auth_uri,
