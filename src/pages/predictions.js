@@ -34,10 +34,11 @@ export default function Predictions() {
   return (
     <Container maxWidth="sm">
       <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography variant="h5" component="h5" gutterBottom>
           Predictions
         </Typography>
-        <React.Fragment>
+        <Box my={4}>
+
           <input
             accept="image/*"
             className={classes.input}
@@ -46,14 +47,16 @@ export default function Predictions() {
             type="file"
             onChange={handleChange}
           />
+        </Box>
+        <Box my={4}>
           <label htmlFor="contained-button-file">
             <Button variant="contained" color="primary" component="span">
               Upload Images
                 </Button>
           </label>
-        </React.Fragment>
+        </Box>
         <Button variant="contained" color="primary" component={Link} naked href="/">
-          Go to the index page
+          Index Page
         </Button>
       </Box>
     </Container >

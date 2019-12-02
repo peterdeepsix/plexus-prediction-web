@@ -8,7 +8,9 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Link from '../components/Link';
+import TextField from '@material-ui/core/TextField';
+
+import PredictionList from '../components/PredictionList'
 
 import getConfig from 'next/config'
 const { publicRuntimeConfig } = getConfig()
@@ -136,39 +138,37 @@ export default class Index extends Component {
     return (
       <Container maxWidth="sm">
         <Box my={4}>
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography variant="h5" component="h5" gutterBottom>
             Plexus Prediction Engine
         </Typography>
-          <Link href="/predictions" color="secondary">
-            Go to the predictions page.
-        </Link>
-          {user ? (
-            <Button variant="contained" color="primary" onClick={this.handleLogout}>
-              Logout
+          <Box my={4}>
+            {user ? (
+              <Button variant="contained" color="primary" onClick={this.handleLogout}>
+                Logout
           </Button>
-          ) : (
-              <Button variant="contained" color="primary" onClick={this.handleLogin}>
-                Login
+            ) : (
+                <Button variant="contained" color="primary" onClick={this.handleLogin}>
+                  Login
         </Button>
-            )}
+              )}
+          </Box>
+
           {user && (
-            <div>
+            <Box my={4}>
               <form onSubmit={this.handleSubmit}>
-                <input
+                <TextField
+                  id="add-prediction"
+                  label="Add Prediction"
+                  variant="outlined"
                   type={'text'}
                   onChange={this.handleChange}
-                  placeholder={'add message...'}
-                  value={value}
-                />
+                  placeholder={'define prediction...'}
+                  value={value} />
               </form>
-              <ul>
-                {messages &&
-                  Object.keys(messages).map(key => (
-                    <li key={key}>{messages[key].text}</li>
-                  ))}
-              </ul>
-            </div>
+              <PredictionList messages={messages} />
+            </Box>
           )}
+
         </Box>
       </Container>
     )
