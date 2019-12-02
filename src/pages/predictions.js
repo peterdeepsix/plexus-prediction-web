@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Predictions() {
   const classes = useStyles();
-  const { user, signOut } = useContext(UserContext);
+  const { user, handleLogin, handleLogout } = useContext(UserContext);
   const [selectedFiles, setSelectedFiles] = useState(null);
 
   const handleChange = event => {
@@ -32,31 +32,42 @@ export default function Predictions() {
   }
   return (
     <Container maxWidth="sm">
-      <Box my={4}>
-        {user &&
-          <Typography variant="h5" component="h5" gutterBottom>
-            Predictions - {user.displayName}
-          </Typography>
-        }
+
+      {user &&
         <Box my={4}>
-          <input
-            accept="image/*"
-            className={classes.input}
-            id="contained-button-file"
-            multiple
-            type="file"
-            onChange={handleChange}
-          />
-          <label htmlFor="contained-button-file">
-            <Button variant="contained" color="primary" component="span">
-              Upload Images
-                </Button>
-          </label>
+          <Typography variant="h5" component="h5" gutterBottom>
+            {user.displayName}
+          </Typography>
+          <Box my={4}>
+            <Button variant="contained" color="primary" onClick={handleLogout}>
+              Logout
+           </Button>
+          </Box>
         </Box>
+      }
+
+      <Box my={4}>
+        <input
+          accept="image/*"
+          className={classes.input}
+          id="contained-button-file"
+          multiple
+          type="file"
+          onChange={handleChange}
+        />
+        <label htmlFor="contained-button-file">
+          <Button variant="contained" color="primary" component="span">
+            Upload Images
+                </Button>
+        </label>
+      </Box>
+      <Box my={4}>
         <Button variant="contained" color="primary" component={Link} naked href="/">
           Index Page
         </Button>
       </Box>
+
+
     </Container >
   );
 }
