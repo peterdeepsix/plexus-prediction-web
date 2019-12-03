@@ -3,6 +3,7 @@ import React, { useContext, Component } from 'react'
 
 // Firebase
 import firebase from 'firebase/app'
+import "firebase/storage";
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'isomorphic-unfetch'
@@ -28,14 +29,18 @@ import getConfig from 'next/config'
 const { publicRuntimeConfig } = getConfig()
 const { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId } = publicRuntimeConfig
 
+let storage = null
+
 // Main export
 export default class MyApp extends App {
+
   static async getInitialProps({ req, query }) {
     const user = req && req.session ? req.session.decodedToken : null
     // don't fetch anything from firebase if the user is not found
     // const snap = user && await req.firebaseServer.database().ref('messages').once('value')
     // const messages = snap && snap.val()
     const messages = null
+
     return { user, messages }
   }
 
@@ -45,6 +50,7 @@ export default class MyApp extends App {
       user: this.props.user,
     }
   }
+
   componentDidMount() {
     if (!firebase.apps.length) {
       firebase.initializeApp({
@@ -57,8 +63,8 @@ export default class MyApp extends App {
         appId: appId,
         measurementId: measurementId
       })
+      storage = firebase.storage();
     }
-
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({ user: user })
@@ -102,7 +108,7 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props;
 
     return (
-      <UserContext.Provider value={{ user: this.state.user, handleLogin: this.handleLogin, handleLogout: this.handleLogout }}>
+      <UserContext.Provider value={{ storage: storage, user: this.state.user, handleLogin: this.handleLogin, handleLogout: this.handleLogout }}>
         <Head>
           <title>Plexus Prediction Engine </title>
         </Head>
