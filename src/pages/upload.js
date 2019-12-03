@@ -88,9 +88,11 @@ export default function Upload() {
                             </Button>
                         </label>
                         {console.log(selectedFiles)}
-                        <Button variant="contained" color="primary" component="span" onClick={handleUpload}>
+                        {selectedFiles ? <Button variant="contained" color="primary" component="span" onClick={handleUpload}>
                             Upload Images
-                            </Button>
+                            </Button> : <Button disabled variant="contained" color="primary" component="span" onClick={handleUpload}>
+                                Upload Images
+                            </Button>}
 
                         <img
                             src={url || "https://via.placeholder.com/256x256"}
