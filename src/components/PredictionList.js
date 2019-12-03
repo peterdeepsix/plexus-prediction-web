@@ -23,17 +23,17 @@ function ListItemLink(props) {
 
 export default function PredictionList(props) {
     const classes = useStyles();
-    const { messages } = props
+    const { predictions } = props
     return (
         <div className={classes.root}>
             <List component="nav" aria-label="predictions">
-                {messages &&
-                    Object.keys(messages).map(key => (
+                {predictions &&
+                    Object.keys(predictions).map(key => (
                         <ListItem divider button component={Link} naked href="/predictions" key={key}>
                             <ListItemIcon>
                                 <WhatshotIcon />
                             </ListItemIcon>
-                            <ListItemText primary={messages[key].text} />
+                            <ListItemText primary={predictions[key].display_name} secondary={predictions[key].score} />
                         </ListItem>
 
                     ))}

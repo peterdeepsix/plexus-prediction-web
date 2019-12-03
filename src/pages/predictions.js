@@ -24,8 +24,8 @@ export default class Predictions extends Component {
     // don't fetch anything from firebase if the user is not found
     // const snap = user && await req.firebaseServer.database().ref('messages').once('value')
     // const messages = snap && snap.val()
-    const messages = null
-    return { user, messages }
+    const predictions = null
+    return { user, predictions }
   }
 
   constructor(props) {
@@ -33,7 +33,7 @@ export default class Predictions extends Component {
     this.state = {
       user: this.props.user,
       value: '',
-      messages: this.props.messages,
+      predictions: this.props.predictions,
     }
 
     this.addDbListener = this.addDbListener.bind(this)
@@ -85,13 +85,13 @@ export default class Predictions extends Component {
 
   addDbListener() {
     var db = firebase.firestore()
-    let unsubscribe = db.collection('messages').onSnapshot(
+    let unsubscribe = db.collection('predictions').onSnapshot(
       querySnapshot => {
-        var messages = {}
+        var predictions = {}
         querySnapshot.forEach(function (doc) {
-          messages[doc.id] = doc.data()
+          predictions[doc.id] = doc.data()
         })
-        if (messages) this.setState({ messages })
+        if (predictions) this.setState({ predictions })
       },
       error => {
         console.error(error)
@@ -101,7 +101,7 @@ export default class Predictions extends Component {
   }
 
   removeDbListener() {
-    // firebase.database().ref('messages').off()
+    // firebase.database().ref('predictions').off()
     if (this.state.unsubscribe) {
       this.state.unsubscribe()
     }
@@ -116,13 +116,13 @@ export default class Predictions extends Component {
   }
 
   render() {
-    const { user, messages } = this.state
+    const { user, predictions } = this.state
     return (
       <Container maxWidth="sm">
         <Box my={4}>
           {user ? (
             <Box my={4}>
-              <PredictionList messages={messages} />
+              <PredictionList predictions={predictions} />
             </Box>
           ) : (<Typography variant="body1" component="body1" gutterBottom>
             Login to see predictions.
