@@ -1,22 +1,34 @@
-import React, { Component } from 'react'
+//React
+import React, { useContext, Component } from 'react'
+
+// Firebase
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'isomorphic-unfetch'
+
+// Nextjs
 import App from 'next/app';
 import Head from 'next/head';
 import Router from 'next/router';
+
+// Material-ui
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../config/theme';
+
+// Auth & User context
 import UserContext from '../lib/UserContext'
 
+// Components
+import NavHeader from '../components/NavHeader'
 
+// Nextjs env config
 import getConfig from 'next/config'
 const { publicRuntimeConfig } = getConfig()
 const { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId } = publicRuntimeConfig
 
-
+// Main export
 export default class MyApp extends App {
   static async getInitialProps({ req, query }) {
     const user = req && req.session ? req.session.decodedToken : null
@@ -97,6 +109,7 @@ export default class MyApp extends App {
         <ThemeProvider theme={theme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
+          <NavHeader />
           <Component {...pageProps} />
         </ThemeProvider>
       </UserContext.Provider>

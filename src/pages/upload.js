@@ -1,178 +1,63 @@
-import React, { Component } from 'react'
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/firestore'
-import 'isomorphic-unfetch'
+// Main
+import React, { useState } from 'react';
+import { useContext } from 'react';
 
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+// Auth context
+import UserContext from '../lib/UserContext';
+
+// Components
+import Link from '../components/Link';
+
+// Material-ui
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import Container from '@material-ui/core/Container';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
 
-import PredictionList from '../components/PredictionList'
+// Material-ui styles
+const useStyles = makeStyles(theme => ({
+    input: {
+        display: 'none',
+    },
+}));
 
-import UserContext from '../lib/UserContext'
+export default function Upload() {
+    const classes = useStyles();
+    const { user, handleLogin, handleLogout } = useContext(UserContext);
+    const [selectedFiles, setSelectedFiles] = useState(null);
 
-import getConfig from 'next/config'
-const { publicRuntimeConfig } = getConfig()
-const { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId } = publicRuntimeConfig
-
-export default class Upload extends Component {
-    static async getInitialProps({ req, query }) {
-        const user = req && req.session ? req.session.decodedToken : null
-        // don't fetch anything from firebase if the user is not found
-        // const snap = user && await req.firebaseServer.database().ref('messages').once('value')
-        // const messages = snap && snap.val()
-        const messages = null
-        return { user, messages }
+    const handleChange = event => {
+        const files = event.target.files;
+        setSelectedFiles(files)
+        console.log(files)
     }
-
-    constructor(props) {
-        super(props)
-        this.state = {
-            user: this.props.user,
-            value: '',
-            messages: this.props.messages,
-        }
-
-        this.addDbListener = this.addDbListener.bind(this)
-        this.removeDbListener = this.removeDbListener.bind(this)
-        this.handleChange = this.handleChange.bind(this)
-        this.handleSubmit = this.handleSubmit.bind(this)
-    }
-
-    componentDidMount() {
-        if (!firebase.apps.length) {
-            firebase.initializeApp({
-                apiKey: apiKey,
-                authDomain: authDomain,
-                databaseURL: databaseURL,
-                projectId: projectId,
-                storageBucket: storageBucket,
-                messagingSenderId: messagingSenderId,
-                appId: appId,
-                measurementId: measurementId
-            })
-        }
-
-        if (this.state.user) this.addDbListener()
-
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                this.setState({ user: user })
-                return user
-                    .getIdToken()
-                    .then(token => {
-                        // eslint-disable-next-line no-undef
-                        return fetch('/api/login', {
-                            method: 'POST',
-                            // eslint-disable-next-line no-undef
-                            headers: new Headers({ 'Content-Type': 'application/json' }),
-                            credentials: 'same-origin',
-                            body: JSON.stringify({ token }),
-                        })
-                    })
-                    .then(res => this.addDbListener())
-            } else {
-                this.setState({ user: null })
-                // eslint-disable-next-line no-undef
-                fetch('/api/logout', {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                }).then(() => this.removeDbListener())
-            }
-        })
-    }
-
-    addDbListener() {
-        var db = firebase.firestore()
-        let unsubscribe = db.collection('messages').onSnapshot(
-            querySnapshot => {
-                var messages = {}
-                querySnapshot.forEach(function (doc) {
-                    messages[doc.id] = doc.data()
-                })
-                if (messages) this.setState({ messages })
-            },
-            error => {
-                console.error(error)
-            }
-        )
-        this.setState({ unsubscribe })
-    }
-
-    removeDbListener() {
-        // firebase.database().ref('messages').off()
-        if (this.state.unsubscribe) {
-            this.state.unsubscribe()
-        }
-    }
-
-    handleChange(event) {
-        this.setState({ value: event.target.value })
-    }
-
-    handleSubmit(event) {
-        event.preventDefault()
-        var db = firebase.firestore()
-        const date = new Date().getTime()
-        db.collection('messages')
-            .doc(`${date}`)
-            .set({
-                id: date,
-                text: this.state.value,
-            })
-        this.setState({ value: '' })
-    }
-
-    handleLogin() {
-        firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
-    }
-
-    handleLogout() {
-        firebase.auth().signOut()
-    }
-
-    render() {
-        const { user, value, messages } = this.state
-
-        return (
-            <Container maxWidth="sm">
-                <Box my={4}>
-                    <Typography variant="h5" component="h5" gutterBottom>
-                        Plexus Prediction Engine
-        </Typography>
-                    <Box my={4}>
-                        {user ? (
-                            <Button variant="contained" color="primary" onClick={this.handleLogout}>
-                                Logout
+    return (
+        <Container maxWidth="sm">
+            <Box my={4}>
+                {user ? (
+                    <React.Fragment>
+                        <input
+                            accept="image/*"
+                            className={classes.input}
+                            id="contained-button-file"
+                            multiple
+                            type="file"
+                            onChange={handleChange}
+                        />
+                        <label htmlFor="contained-button-file">
+                            <Button variant="contained" color="primary" component="span">
+                                Upload Images
           </Button>
-                        ) : (
-                                <Button variant="contained" color="primary" onClick={this.handleLogin}>
-                                    Login
-        </Button>
-                            )}
-                    </Box>
-
-                    {user && (
-                        <Box my={4}>
-                            <form onSubmit={this.handleSubmit}>
-                                <TextField
-                                    id="add-prediction"
-                                    label="Add Prediction"
-                                    variant="outlined"
-                                    type={'text'}
-                                    onChange={this.handleChange}
-                                    placeholder={'define prediction...'}
-                                    value={value} />
-                            </form>
-                            <PredictionList messages={messages} />
-                        </Box>
-                    )}
-
-                </Box>
-            </Container>
-        )
-    }
+                        </label>
+                    </React.Fragment>
+                ) : (
+                        <Typography variant="h6" component="h6" gutterBottom>
+                            Login to upload media.
+            </Typography>
+                    )
+                }
+            </Box>
+        </Container >
+    );
 }
