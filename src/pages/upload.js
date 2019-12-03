@@ -46,13 +46,13 @@ export default function Upload() {
                             onChange={handleChange}
                         />
                         <label htmlFor="contained-button-file">
-                            <Button variant="contained" color="primary" component="span">
+                            <Button variant="outlined" color="primary" component="span">
                                 Upload Images
           </Button>
                         </label>
                     </React.Fragment>
                 ) : (
-                        <Typography variant="h6" component="h6" gutterBottom>
+                        <Typography variant="body1" component="body1" gutterBottom>
                             Login to upload media.
             </Typography>
                     )

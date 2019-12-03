@@ -15,20 +15,17 @@ export default function Index() {
   return (
     <Container maxWidth="sm">
       <Box my={4}>
-        <Typography variant="h2" component="h2" gutterBottom>
-          Plexus Prediction Engine
-      </Typography>
-      </Box>
-      {user ? (
-        <Typography variant="h6" component="h6" gutterBottom>
-          {user.displayName} is logged in as frig!
+        {user ? (
+          <Typography variant="body1" component="body1" gutterBottom>
+            {user.displayName} is logged in as frig!
         </Typography>
-      ) : (
-          <Typography variant="h6" component="h6" gutterBottom>
-            Login yo shit son!
+        ) : (
+            <Typography variant="body1" component="body1" gutterBottom>
+              Login yo shit son!
           </Typography>
-        )
-      }
+          )
+        }
+      </Box>
     </Container>
   )
 }

@@ -154,7 +154,7 @@ export default class Predictions extends Component {
               </form>
               <PredictionList messages={messages} />
             </Box>
-          ) : (<Typography variant="h6" component="h6" gutterBottom>
+          ) : (<Typography variant="body1" component="body1" gutterBottom>
             Login to see predictions.
                 </Typography>)}
         </Box>
