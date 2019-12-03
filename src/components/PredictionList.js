@@ -5,7 +5,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import GestureIcon from '@material-ui/icons/Gesture';
+import WhatshotIcon from '@material-ui/icons/Whatshot';
 
 import Link from '../components/Link';
 
@@ -31,7 +31,7 @@ export default function PredictionList(props) {
                     Object.keys(messages).map(key => (
                         <ListItem divider button component={Link} naked href="/predictions" key={key}>
                             <ListItemIcon>
-                                <GestureIcon />
+                                <WhatshotIcon />
                             </ListItemIcon>
                             <ListItemText primary={messages[key].text} />
                         </ListItem>
