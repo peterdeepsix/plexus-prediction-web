@@ -6,6 +6,9 @@ const FileStore = require('session-file-store')(session)
 const next = require('next')
 const admin = require('firebase-admin')
 
+const { join } = require('path')
+const { parse } = require('url')
+
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
@@ -14,8 +17,6 @@ const handle = app.getRequestHandler()
 app.prepare().then(() => {
     const server = express()
     const { serverRuntimeConfig, publicRuntimeConfig } = require('next/config').default();
-    console.log(serverRuntimeConfig)
-    console.log(publicRuntimeConfig)
     const { type, project_id, private_key_id, private_key, client_email, client_id, auth_uri, token_uri, auth_provider_x509_cert_url, client_x509_cert_url } = serverRuntimeConfig
     const firebase = admin.initializeApp(
         {
@@ -55,6 +56,13 @@ app.prepare().then(() => {
     server.use((req, res, next) => {
         req.firebaseServer = firebase
         next()
+    })
+
+    server.post('/service-worker.js', (req, res) => {
+        const parsedUrl = parse(req.url, true)
+        const { pathname } = parsedUrl
+        const filePath = join(__dirname, '.next', pathname)
+        app.serveStatic(req, res, filePath)
     })
 
     server.post('/api/login', (req, res) => {

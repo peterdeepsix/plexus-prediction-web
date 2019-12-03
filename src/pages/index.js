@@ -12,6 +12,8 @@ import TextField from '@material-ui/core/TextField';
 
 import PredictionList from '../components/PredictionList'
 
+import UserContext from '../lib/UserContext'
+
 import getConfig from 'next/config'
 const { publicRuntimeConfig } = getConfig()
 const { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId } = publicRuntimeConfig

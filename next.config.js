@@ -1,8 +1,10 @@
+
+const withOffline = require('next-offline')
+
 require('dotenv').config()
 const webpack = require('webpack')
 
-// next.config.js
-module.exports = {
+nextConfig = {
     webpack: (config) => {
         config.plugins.push(
             new webpack.EnvironmentPlugin(process.env)
@@ -33,4 +35,7 @@ module.exports = {
         measurementId: process.env.measurementId,
     },
 }
+
+
+module.exports = withOffline(nextConfig)
 

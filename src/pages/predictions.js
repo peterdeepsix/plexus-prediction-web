@@ -34,33 +34,37 @@ export default function Predictions() {
     <Container maxWidth="sm">
 
       {user &&
-        <Box my={4}>
-          <Typography variant="h5" component="h5" gutterBottom>
-            {user.displayName}
-          </Typography>
+        <React.Fragment>
+          <Box my={4}>
+            <Typography variant="h5" component="h5" gutterBottom>
+              {user.displayName}
+            </Typography>
+          </Box>
           <Box my={4}>
             <Button variant="contained" color="primary" onClick={handleLogout}>
               Logout
            </Button>
           </Box>
-        </Box>
+          <Box my={4}>
+            <input
+              accept="image/*"
+              className={classes.input}
+              id="contained-button-file"
+              multiple
+              type="file"
+              onChange={handleChange}
+            />
+            <label htmlFor="contained-button-file">
+              <Button variant="contained" color="primary" component="span">
+                Upload Images
+          </Button>
+            </label>
+          </Box>
+        </React.Fragment>
+
       }
 
-      <Box my={4}>
-        <input
-          accept="image/*"
-          className={classes.input}
-          id="contained-button-file"
-          multiple
-          type="file"
-          onChange={handleChange}
-        />
-        <label htmlFor="contained-button-file">
-          <Button variant="contained" color="primary" component="span">
-            Upload Images
-                </Button>
-        </label>
-      </Box>
+
       <Box my={4}>
         <Button variant="contained" color="primary" component={Link} naked href="/">
           Index Page
