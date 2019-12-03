@@ -16,6 +16,7 @@ import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 // Material-ui styles
 const useStyles = makeStyles(theme => ({
@@ -90,12 +91,14 @@ export default function Upload() {
                         <Button variant="contained" color="primary" component="span" onClick={handleUpload}>
                             Upload Images
                             </Button>
+
                         <img
                             src={url || "https://via.placeholder.com/256x256"}
                             alt="Uploaded Images"
                             height="256"
                             width="256"
                         />
+                        <LinearProgress variant="determinate" value={progress} />
                     </React.Fragment>
                 ) : (
                         <Typography variant="body1" component="body1" gutterBottom>
