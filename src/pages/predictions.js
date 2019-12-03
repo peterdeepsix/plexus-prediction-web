@@ -38,8 +38,6 @@ export default class Predictions extends Component {
 
     this.addDbListener = this.addDbListener.bind(this)
     this.removeDbListener = this.removeDbListener.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   componentDidMount() {
@@ -109,23 +107,6 @@ export default class Predictions extends Component {
     }
   }
 
-  handleChange(event) {
-    this.setState({ value: event.target.value })
-  }
-
-  handleSubmit(event) {
-    event.preventDefault()
-    var db = firebase.firestore()
-    const date = new Date().getTime()
-    db.collection('messages')
-      .doc(`${date}`)
-      .set({
-        id: date,
-        text: this.state.value,
-      })
-    this.setState({ value: '' })
-  }
-
   handleLogin() {
     firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
   }
@@ -135,23 +116,12 @@ export default class Predictions extends Component {
   }
 
   render() {
-    const { user, value, messages } = this.state
+    const { user, messages } = this.state
     return (
       <Container maxWidth="sm">
         <Box my={4}>
-
           {user ? (
             <Box my={4}>
-              <form onSubmit={this.handleSubmit}>
-                <TextField
-                  id="add-prediction"
-                  label="Add Prediction"
-                  variant="outlined"
-                  type={'text'}
-                  onChange={this.handleChange}
-                  placeholder={'define prediction...'}
-                  value={value} />
-              </form>
               <PredictionList messages={messages} />
             </Box>
           ) : (<Typography variant="body1" component="body1" gutterBottom>
