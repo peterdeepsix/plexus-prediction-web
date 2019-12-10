@@ -1,5 +1,5 @@
 // Main
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useContext } from "react";
 
 import "firebase/storage";
@@ -31,6 +31,20 @@ const useStyles = makeStyles(theme => ({
     display: "none"
   }
 }));
+
+const VideoPreview = ({ stream }) => {
+  const videoRef = useRef < HTMLVideoElement > null;
+
+  useEffect(() => {
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
+  if (!stream) {
+    return null;
+  }
+  return <video ref={videoRef} width={500} height={500} autoPlay controls />;
+};
 
 export default function Record() {
   const classes = useStyles();
@@ -122,20 +136,22 @@ export default function Record() {
     <Container maxWidth="sm">
       <Box my={4}>
         {user ? (
-          <React.Fragment>
-            <ReactMediaRecorder
-              video
-              render={({
-                status,
-                startRecording,
-                stopRecording,
-                mediaBlobUrl
-              }) => (
-                <React.Fragment>
+          <ReactMediaRecorder
+            video
+            render={({
+              status,
+              startRecording,
+              stopRecording,
+              mediaBlobUrl,
+              videoPreviewStream
+            }) => {
+              return (
+                <Container maxWidth="sm">
                   <Box my={4}>
                     <Typography variant="h6" component="h6" gutterBottom>
                       Status: {status}
                     </Typography>
+                    <LinearProgress variant="determinate" value={progress} />
                   </Box>
                   <Box my={4}>
                     <Button
@@ -145,22 +161,20 @@ export default function Record() {
                     >
                       Start Recording
                     </Button>
-                    <Button
-                      color="primary"
-                      component="span"
-                      onClick={stopRecording}
-                    >
+                    <Button component="span" onClick={stopRecording}>
                       Stop Recording
                     </Button>
                   </Box>
                   <Box my={4}>
-                    <video src={mediaBlobUrl} controls autoPlay loop />
+                    <VideoPreview stream={videoPreviewStream} />{" "}
                   </Box>
-                </React.Fragment>
-              )}
-            />
-            <LinearProgress variant="determinate" value={progress} />
-          </React.Fragment>
+                  <Box my={4}>
+                    <video src={mediaBlobUrl} controls autoplay loop />
+                  </Box>
+                </Container>
+              );
+            }}
+          />
         ) : (
           <Typography variant="body1" component="body1" gutterBottom>
             Login to record media.
