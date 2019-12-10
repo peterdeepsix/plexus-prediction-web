@@ -30,6 +30,7 @@ const { publicRuntimeConfig } = getConfig()
 const { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId, measurementId } = publicRuntimeConfig
 
 let storage = null
+let firestore = null
 
 // Main export
 export default class MyApp extends App {
@@ -64,6 +65,7 @@ export default class MyApp extends App {
         measurementId: measurementId
       })
       storage = firebase.storage();
+      firestore = firebase.firestore();
     }
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
@@ -108,7 +110,7 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props;
 
     return (
-      <UserContext.Provider value={{ storage: storage, user: this.state.user, handleLogin: this.handleLogin, handleLogout: this.handleLogout }}>
+      <UserContext.Provider value={{ firestore: firestore, storage: storage, user: this.state.user, handleLogin: this.handleLogin, handleLogout: this.handleLogout }}>
         <Head>
           <title>Plexus Prediction Engine </title>
         </Head>

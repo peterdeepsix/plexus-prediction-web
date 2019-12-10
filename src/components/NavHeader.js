@@ -17,6 +17,7 @@ import Menu from '@material-ui/core/Menu';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import HomeIcon from '@material-ui/icons/Home';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import LinkedCameraIcon from '@material-ui/icons/LinkedCamera';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
@@ -43,8 +44,6 @@ const useStyles = makeStyles(theme => ({
         height: 20,
     },
 }));
-
-
 
 // Main export
 export default function NavHeader() {
@@ -78,15 +77,18 @@ export default function NavHeader() {
                             <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
                                 <Link color="inherit" href="/" className={classes.link}>
                                     <HomeIcon className={classes.icon} />
-                                    Plexus
                         </Link>
                                 <Link color="inherit" href="/predictions" className={classes.link}>
                                     <WhatshotIcon className={classes.icon} />
-                                    Predictions
+                                    Predict
                         </Link>
-                                <Link color="textPrimary" href="/upload" className={classes.link}>
+                                <Link color="inherit" href="/upload" className={classes.link}>
                                     <CloudUploadIcon className={classes.icon} />
                                     Upload
+                        </Link>
+                        <Link color="inherit" href="/record" className={classes.link}>
+                                    <LinkedCameraIcon className={classes.icon} />
+                                    Record
                         </Link>
                             </Breadcrumbs>
                             <IconButton
@@ -122,11 +124,14 @@ export default function NavHeader() {
                                 </MenuItem>
                             </Menu>
                         </React.Fragment>
-                    ) : (<React.Fragment><Typography variant="h6" className={classes.title}>
-                        Plexus Prediction Engine
-                  </Typography><Button color="inherit" variant="outlined" onClick={handleLogin}>
+                    ) : (<React.Fragment>
+                        <Typography variant="h6" className={classes.title}>
+                            Plexus Prediction Engine
+                            </Typography>
+                        <Button color="inherit" variant="outlined" onClick={handleLogin}>
                             Login
-</Button></React.Fragment>)}
+                            </Button>
+                    </React.Fragment>)}
                 </Toolbar>
             </AppBar>
         </div>

@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function Upload() {
+export default function Record() {
     const classes = useStyles();
     const { firestore, storage, user, handleLogin, handleLogout } = useContext(UserContext);
     const [selectedFiles, setSelectedFiles] = useState(null);
