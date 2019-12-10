@@ -116,25 +116,27 @@ export default function Record() {
             <Box my={4}>
                 {user ? (
                     <React.Fragment>
-                          <ReactMediaRecorder
-      video
-      render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
-        <div>
-          <p>{status}</p>
-          <button onClick={startRecording}>Start Recording</button>
-          <button onClick={stopRecording}>Stop Recording</button>
-          <video src={mediaBlobUrl} controls autoplay loop />
-        </div>
-      )}
-    />
-
+                        <ReactMediaRecorder
+                            video
+                            render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
+                                <div>
+                                    <Typography variant="body1" component="body1" gutterBottom>{status} </Typography>
+                                    <Button color="primary" component="span" onClick={startRecording}>
+                                        Start Recording
+                                    </Button>
+                                    <Button color="primary" component="span" onClick={stopRecording}>
+                                        Stop Recording
+                                        </Button>
+                                    <video src={mediaBlobUrl} controls autoplay loop />
+                                </div>
+                            )}
+                        />
                         <LinearProgress variant="determinate" value={progress} />
-
                     </React.Fragment>
                 ) : (
                         <Typography variant="body1" component="body1" gutterBottom>
                             Login to record media.
-            </Typography>
+                        </Typography>
                     )
                 }
             </Box>
