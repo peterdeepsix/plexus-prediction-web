@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const VideoPreview = ({ stream }) => {
-  const videoRef = useRef < HTMLVideoElement > null;
+  const videoRef = useRef(null);
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -166,10 +166,22 @@ export default function Record() {
                     </Button>
                   </Box>
                   <Box my={4}>
-                    <VideoPreview stream={videoPreviewStream} />{" "}
+                    <Typography variant="h6" component="h6" gutterBottom>
+                      Preview
+                    </Typography>
+                    <video
+                      src={videoPreviewStream}
+                      width={500}
+                      height={500}
+                      autoPlay
+                      controls
+                    />
                   </Box>
                   <Box my={4}>
-                    <video src={mediaBlobUrl} controls autoplay loop />
+                    <Typography variant="h6" component="h6" gutterBottom>
+                      Local File
+                    </Typography>
+                    <video src={mediaBlobUrl} controls autoPlay loop />
                   </Box>
                 </Container>
               );
