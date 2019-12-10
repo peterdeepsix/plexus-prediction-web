@@ -22,6 +22,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
+// Media recorder
+import { ReactMediaRecorder } from "react-media-recorder";
+
 // Material-ui styles
 const useStyles = makeStyles(theme => ({
     input: {
@@ -113,55 +116,24 @@ export default function Record() {
             <Box my={4}>
                 {user ? (
                     <React.Fragment>
-                        <Box my={4}>
-                            <input
-                                accept="image/*"
-                                className={classes.input}
-                                id="contained-button-file"
-                                multiple
-                                type="file"
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="contained-button-file">
-                                <Button variant="outlined" color="primary" component="span">
-                                    Select Images
-                            </Button>
-                            </label>
-                        </Box>
-                        <Box my={4}>
-                            <List component="nav" aria-label="predictions">
-                                {selectedFiles &&
-                                    Object.keys(selectedFiles).map(key => (
-                                        <ListItem divider key={key}>
-                                            <ListItemText primary={selectedFiles[key].name} />
-                                        </ListItem>
+                          <ReactMediaRecorder
+      video
+      render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
+        <div>
+          <p>{status}</p>
+          <button onClick={startRecording}>Start Recording</button>
+          <button onClick={stopRecording}>Stop Recording</button>
+          <video src={mediaBlobUrl} controls autoplay loop />
+        </div>
+      )}
+    />
 
-                                    ))}
-                            </List>
-                        </Box>
-
-
-
-                        {selectedFiles ? <Button variant="contained" color="primary" component="span" onClick={handleUpload}>
-                            Upload Images
-                            </Button> : <Button disabled variant="contained" color="primary" component="span" onClick={handleUpload}>
-                                Upload Images
-                            </Button>
-                        }
-                        <Box my={4}>
-                            <img
-                                src={url || "https://via.placeholder.com/256x256"}
-                                alt="Uploaded Images"
-                                height="256"
-                                width="256"
-                            />
-                        </Box>
                         <LinearProgress variant="determinate" value={progress} />
 
                     </React.Fragment>
                 ) : (
                         <Typography variant="body1" component="body1" gutterBottom>
-                            Login to upload media.
+                            Login to record media.
             </Typography>
                     )
                 }
