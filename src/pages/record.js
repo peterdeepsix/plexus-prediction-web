@@ -34,16 +34,20 @@ const useStyles = makeStyles(theme => ({
 
 const VideoPreview = ({ stream }) => {
   const videoRef = useRef(null);
+  console.log("stream")
+  console.log(stream)
 
   useEffect(() => {
     if (videoRef.current && stream) {
+      console.log("deep stream")
+      console.log(stream)
       videoRef.current.srcObject = stream;
     }
   }, [stream]);
   if (!stream) {
     return null;
   }
-  return <video ref={videoRef} width={500} height={500} autoPlay controls />;
+  return <video ref={videoRef} autoPlay controls />;
 };
 
 export default function Record() {
@@ -51,85 +55,19 @@ export default function Record() {
   const { firestore, storage, user, handleLogin, handleLogout } = useContext(
     UserContext
   );
-  const [selectedFiles, setSelectedFiles] = useState(null);
-  const [image, setImage] = useState(null);
-  const [url, setUrl] = useState("");
+  const [media, setMedia] = useState(null);
   const [progress, setProgress] = useState(0);
 
-  console.log(user);
-  const handleChange = event => {
-    const files = event.target.files;
-    setSelectedFiles(files);
-    setImage(files[0]);
-    console.log(files);
+  const handleSaveMedia = (mediaBlobUrl) => {
+    console.log("handleSaveMedia")
+    console.log(mediaBlobUrl)
+    setMedia(mediaBlobUrl)
   };
 
-  const handleUpload = () => {
-    const uploadTask = storage
-      .ref(`plexus-predictions-up/${image.name}`)
-      .put(image);
-    uploadTask.on(
-      "state_changed",
-      snapshot => {
-        // progress function ...
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(progress);
-      },
-      error => {
-        // Error function ...
-        console.log(error);
-      },
-      () => {
-        // complete function ...
-        let bucket;
-        let fullPath;
-        let downloadURL;
-
-        storage
-          .ref(`plexus-predictions-up/${image.name}`)
-          .getMetadata()
-          .then(function(metadata) {
-            Console.log(metadata);
-            bucket = metadata.bucket;
-            fullPath = metadata.fullPath;
-          })
-          .catch(function(error) {
-            // Uh-oh, an error occurred!
-          });
-
-        downloadURL = storage
-          .ref(`plexus-predictions-up/${image.name}`)
-          .getDownloadURL()
-          .then(function(url) {
-            Console.log(url);
-            setUrl(url);
-          })
-          .catch(function(error) {
-            // Uh-oh, an error occurred!
-          });
-        console.log("bucket", bucket);
-        console.log("fullPath", fullPath);
-        console.log("downloadURL", downloadURL);
-
-        let { uid, email, displayName } = user;
-
-        let newPrediction = {
-          url: downloadURL,
-          userName: displayName,
-          userId: uid,
-          email,
-          bucket,
-          fullPath
-        };
-        console.log("newPrediction", newPrediction);
-        setProgress(0);
-
-        // let predictionAdded = firestore.collection('predictions').add(newPrediction);
-        // console.log('prediction added', predictionAdded);
-      }
-    );
+  const handleUploadMedia = () => {
+    console.log("handleUploadMedia")
+    console.log("media to be uploaded")
+    console.log(media)
   };
 
   return (
@@ -156,30 +94,35 @@ export default function Record() {
                   <Box my={4}>
                     <Button
                       color="primary"
-                      component="span"
                       onClick={startRecording}
                     >
                       Start Recording
                     </Button>
-                    <Button component="span" onClick={stopRecording}>
-                      Stop Recording
-                    </Button>
-                  </Box>
-                  <Box my={4}>
+                    </Box>
+                    <Box my={4}>
+                      <Button component="span" onClick={stopRecording}>
+                        Stop Recording
+                      </Button>
+                    </Box>
+                    <Box my={4}>
+                      <Button color="primary" variant="outlined" onClick={() => {handleSaveMedia(mediaBlobUrl)}}>
+                        Save Recording
+                      </Button>
+                    </Box>
+                    <Box my={4}>
+                      <Button color="primary" variant="contained" onClick={handleUploadMedia}>
+                        Upload Recording
+                      </Button>
+                    </Box>
+                    <Box my={4}>
                     <Typography variant="h6" component="h6" gutterBottom>
-                      Preview
+                    videoPreviewStream
                     </Typography>
-                    <video
-                      src={videoPreviewStream}
-                      width={500}
-                      height={500}
-                      autoPlay
-                      controls
-                    />
-                  </Box>
+                    <VideoPreview stream={videoPreviewStream} />
+                    </Box>
                   <Box my={4}>
                     <Typography variant="h6" component="h6" gutterBottom>
-                      Local File
+                      mediaBlobUrl
                     </Typography>
                     <video src={mediaBlobUrl} controls autoPlay loop />
                   </Box>
