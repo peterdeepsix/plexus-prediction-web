@@ -9,6 +9,7 @@ import UserContext from "../lib/UserContext";
 
 // Components
 import Link from "../components/Link";
+import DefaultUpload from "../components/DefaultUpload"
 
 // Material-ui
 import { makeStyles } from "@material-ui/core/styles";
@@ -87,20 +88,25 @@ export default function Record() {
                 <Container maxWidth="sm">
                   <Box my={4}>
                     <Typography variant="h6" component="h6" gutterBottom>
+                      Upload with Dropzone
+                    </Typography>
+                    <DefaultUpload />
+                  </Box>
+                  <Box my={4}>
+                    <Typography variant="h6" component="h6" gutterBottom>
                       Status: {status}
                     </Typography>
                     <LinearProgress variant="determinate" value={progress} />
                   </Box>
                   <Box my={4}>
                     <Button
-                      color="primary"
                       onClick={startRecording}
                     >
                       Start Recording
                     </Button>
                     </Box>
                     <Box my={4}>
-                      <Button component="span" onClick={stopRecording}>
+                      <Button color="primary" onClick={stopRecording}>
                         Stop Recording
                       </Button>
                     </Box>
