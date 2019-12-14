@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import DropzoneComponent from 'react-dropzone-component';
 
 export default class DefaultUpload extends React.Component {

@@ -59,17 +59,17 @@ export default function Record() {
   const [media, setMedia] = useState(null);
   const [progress, setProgress] = useState(0);
 
-  const handleSaveMedia = (mediaBlobUrl) => {
-    console.log("handleSaveMedia")
-    console.log(mediaBlobUrl)
-    setMedia(mediaBlobUrl)
-  };
+  // const handleSaveMedia = (mediaBlobUrl) => {
+  //   console.log("handleSaveMedia")
+  //   console.log(mediaBlobUrl)
+  //   setMedia(mediaBlobUrl)
+  // };
 
-  const handleUploadMedia = () => {
-    console.log("handleUploadMedia")
-    console.log("media to be uploaded")
-    console.log(media)
-  };
+  // const handleUploadMedia = () => {
+  //   console.log("handleUploadMedia")
+  //   console.log("media to be uploaded")
+  //   console.log(media)
+  // };
 
   return (
     <Container maxWidth="sm">
@@ -79,6 +79,7 @@ export default function Record() {
             video
             render={({
               status,
+              error,
               startRecording,
               stopRecording,
               mediaBlobUrl,
@@ -88,36 +89,42 @@ export default function Record() {
                 <Container maxWidth="sm">
                   <Box my={4}>
                     <Typography variant="h6" component="h6" gutterBottom>
-                      Upload with Dropzone
+                      Upload Files
                     </Typography>
+                    <Button color="primary" variant="contained">
+                        Upload Recording
+                      </Button>
                     <DefaultUpload />
                   </Box>
                   <Box my={4}>
                     <Typography variant="h6" component="h6" gutterBottom>
                       Status: {status}
                     </Typography>
+                  </Box>
+                  <Box my={4}>
+                    <Typography variant="h6" component="h6" gutterBottom>
+                      Error: {error}
+                    </Typography>
+                  </Box>
+                  <Box my={4}>
+                    <Typography variant="h6" component="h6" gutterBottom>
+                      Upload Progress
+                    </Typography>
                     <LinearProgress variant="determinate" value={progress} />
                   </Box>
                   <Box my={4}>
                     <Button
+                    variant="outlined"
                       onClick={startRecording}
                     >
                       Start Recording
                     </Button>
+                    {console.log("media")}
+                    {console.log(media)}
                     </Box>
                     <Box my={4}>
-                      <Button color="primary" onClick={stopRecording}>
+                      <Button variant="outlined" onClick={stopRecording}>
                         Stop Recording
-                      </Button>
-                    </Box>
-                    <Box my={4}>
-                      <Button color="primary" variant="outlined" onClick={() => {handleSaveMedia(mediaBlobUrl)}}>
-                        Save Recording
-                      </Button>
-                    </Box>
-                    <Box my={4}>
-                      <Button color="primary" variant="contained" onClick={handleUploadMedia}>
-                        Upload Recording
                       </Button>
                     </Box>
                     <Box my={4}>

@@ -82,10 +82,6 @@ export default function NavHeader() {
                                     <WhatshotIcon className={classes.icon} />
                                     Predict
                         </Link>
-                                <Link color="inherit" href="/upload" className={classes.link}>
-                                    <CloudUploadIcon className={classes.icon} />
-                                    Upload
-                        </Link>
                         <Link color="inherit" href="/record" className={classes.link}>
                                     <LinkedCameraIcon className={classes.icon} />
                                     Record

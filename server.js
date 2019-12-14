@@ -13,6 +13,9 @@ const admin = require("firebase-admin");
 const { join } = require("path");
 const { parse } = require("url");
 
+const { uuid } = require('uuidv4');
+var mime = require('mime-types')
+
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -95,30 +98,57 @@ app.prepare().then(() => {
     res.json({ status: true });
   });
 
-// Process the file upload and upload to Google Cloud Storage.
-server.post('/uploadHandler', multer.single('file'), (req, res, next) => {
-  if (!req.file) {
-    res.status(400).send('No file uploaded.');
-    return;
-  }
+  // Process the file upload and upload to Google Cloud Storage.
+  server.post('/uploadHandler', multer.single('file'), (req, res, next) => {
+    if (!req.file) {
+      res.status(400).send('No file uploaded.');
+      return;
+    }
 
-  // Create a new blob in the bucket and upload the file data.
-  const blob = bucket.file(req.file.originalname);
-  const blobStream = blob.createWriteStream();
+    // Create a new blob in the bucket and upload the file data.
+    const blob = bucket.file(req.file.originalname);
+    const blobStream = blob.createWriteStream();
 
-  blobStream.on('error', (err) => {
-    next(err);
+    blobStream.on('error', (err) => {
+      next(err);
+    });
+
+    blobStream.on('finish', () => {
+      // The public URL can be used to directly access the file via HTTP.
+      const publicUrl = format(`https://storage.googleapis.com/${bucketname}/${blob.name}`);
+      res.status(200).send(publicUrl);
+    });
+
+    blobStream.end(req.file.buffer);
   });
 
-  blobStream.on('finish', () => {
-    // The public URL can be used to directly access the file via HTTP.
-    const publicUrl = format(`https://storage.googleapis.com/${bucketname}/${blob.name}`);
-    res.status(200).send(publicUrl);
-  });
+  // upload video stream wo9ah
+server.post('/upload', multer.single('image'), (req, res, next) => {
+  const type = mime.lookup(req.file.originalname);
 
-  blobStream.end(req.file.buffer);
+	const bucket = storage.bucket(config.google.bucket);
+  const blob = bucket.file(`${uuid()}.${mime.extensions[type][0]}`);
+
+	const stream = blob.createWriteStream({
+		resumable: true,
+		contentType: type,
+		predefinedAcl: 'publicRead',
+	});
+
+	stream.on('error', err => {
+		next(err);
+	});
+
+	stream.on('finish', () => {
+		res.status(200).json({
+			data: {
+				url: `https://storage.googleapis.com/${bucket.name}/${blob.name}`,
+			},
+		});
+	});
+
+	stream.end(req.file.buffer);
 });
-
 
   server.all("*", (req, res) => {
     return handle(req, res);
