@@ -1,3 +1,4 @@
+// express
 const format = require('util').format;
 const express = require("express");
 const session = require("express-session");
@@ -13,24 +14,69 @@ const admin = require("firebase-admin");
 const { join } = require("path");
 const { parse } = require("url");
 
+const https = require("https")
+const fs = require("fs");
+
 const { uuid } = require('uuidv4');
 var mime = require('mime-types')
 
+// http2 server
+const compression = require('compression')
+const spdy = require('spdy')
+
+// init port form env vars
 const port = parseInt(process.env.PORT, 10) || 3000;
+
+// check for dev environment
 const dev = process.env.NODE_ENV !== "production";
+
+// init nextjs app
 const app = next({ dev });
+
+// init nextjs app req handler
 const handle = app.getRequestHandler();
 
+// setup multer for multipart file upload
+const multer = Multer({
+  storage: Multer.memoryStorage(),
+  limits: {
+    fileSize: 100 * 1024 * 1024 
+  }
+});
+
+// setup gcp storage
+const storage = new Storage();
+const bucketname = "plexus-predictions-up";
+const bucket = storage.bucket(bucketname);
+
+
+// cert for local web dev via http2
+const options  = {
+  key: fs.readFileSync(join(__dirname, '/privateKey.key')),
+  cert: fs.readFileSync(join(__dirname, '/certificate.crt'))
+}
+
+// setup compression for http2
+const shouldCompress = (req, res) => {
+  // don't compress responses asking explicitly not
+  if (req.headers['x-no-compression']) {
+    return false
+  }
+
+  // use compression filter function
+  return compression.filter(req, res)
+}
+
+//nextjs prepare app
 app.prepare().then(() => {
-  const server = express();
-  //   const {
-  //     serverRuntimeConfig,
-  //     publicRuntimeConfig
-  //   } = require("next/config").default();
-  //   const {
-  //     type,
-  //     project_id
-  //   } = serverRuntimeConfig;
+
+  // init express
+  const expressApp = express();
+
+  // set up compression in express
+  expressApp.use(compression({ filter: shouldCompress }))
+
+  //init firebase
   const firebase = admin.initializeApp(
     {
       credential: admin.credential.cert(require("./credentials/server"))
@@ -38,11 +84,17 @@ app.prepare().then(() => {
     "server"
   );
 
-  server.use(cors());
-  server.use(bodyParser.json());
-  server.use(express.static(join(__dirname, '')));
+  // use cors lib
+  expressApp.use(cors());
 
-  server.use(
+  //parse request body
+  expressApp.use(bodyParser.json());
+
+  // static server for service worker
+  expressApp.use(express.static(join(__dirname, '')));
+
+  //firebase filestore sesssion middleware
+  expressApp.use(
     session({
       secret: "geheimnis",
       saveUninitialized: true,
@@ -54,31 +106,22 @@ app.prepare().then(() => {
     })
   );
 
-  server.use((req, res, next) => {
+  //firebase instance middleware
+  expressApp.use((req, res, next) => {
     req.firebaseServer = firebase;
     next();
   });
 
-
-  const multer = Multer({
-    storage: Multer.memoryStorage(),
-    limits: {
-      fileSize: 100 * 1024 * 1024 
-    }
-  });
-
-  const storage = new Storage();
-  const bucketname = "plexus-predictions-up";
-  const bucket = storage.bucket(bucketname);
-
-  server.post("/service-worker.js", (req, res) => {
+  // service worker static route
+  expressApp.post("/service-worker.js", (req, res) => {
     const parsedUrl = parse(req.url, true);
     const { pathname } = parsedUrl;
     const filePath = join(__dirname, ".next", pathname);
     app.serveStatic(req, res, filePath);
   });
 
-  server.post("/api/login", (req, res) => {
+  // login route
+  expressApp.post("/api/login", (req, res) => {
     if (!req.body) return res.sendStatus(400);
 
     const token = req.body.token;
@@ -93,19 +136,20 @@ app.prepare().then(() => {
       .catch(error => res.json({ error }));
   });
 
-  server.post("/api/logout", (req, res) => {
+  // logout route
+  expressApp.post("/api/logout", (req, res) => {
     req.session.decodedToken = null;
     res.json({ status: true });
   });
 
-  // Process the file upload and upload to Google Cloud Storage.
-  server.post('/uploadHandler', multer.single('file'), (req, res, next) => {
+  // multer file upload to google cloud
+  expressApp.post('/uploadHandler', multer.single('file'), (req, res, next) => {
     if (!req.file) {
       res.status(400).send('No file uploaded.');
       return;
     }
 
-    // Create a new blob in the bucket and upload the file data.
+    // create a new blob in the bucket and upload the file data.
     const blob = bucket.file(req.file.originalname);
     const blobStream = blob.createWriteStream();
 
@@ -123,39 +167,57 @@ app.prepare().then(() => {
   });
 
   // upload video stream wo9ah
-server.post('/upload', multer.single('image'), (req, res, next) => {
-  const type = mime.lookup(req.file.originalname);
+  expressApp.post('/upload', multer.single('image'), (req, res, next) => {
+    const type = mime.lookup(req.file.originalname);
 
-	const bucket = storage.bucket(config.google.bucket);
-  const blob = bucket.file(`${uuid()}.${mime.extensions[type][0]}`);
+    const bucket = storage.bucket(config.google.bucket);
+    const blob = bucket.file(`${uuid()}.${mime.extensions[type][0]}`);
 
-	const stream = blob.createWriteStream({
-		resumable: true,
-		contentType: type,
-		predefinedAcl: 'publicRead',
-	});
+    const stream = blob.createWriteStream({
+      resumable: true,
+      contentType: type,
+      predefinedAcl: 'publicRead',
+    });
 
-	stream.on('error', err => {
-		next(err);
-	});
+    stream.on('error', err => {
+      next(err);
+    });
 
-	stream.on('finish', () => {
-		res.status(200).json({
-			data: {
-				url: `https://storage.googleapis.com/${bucket.name}/${blob.name}`,
-			},
-		});
-	});
+    stream.on('finish', () => {
+      res.status(200).json({
+        data: {
+          url: `https://storage.googleapis.com/${bucket.name}/${blob.name}`,
+        },
+      });
+    });
 
-	stream.end(req.file.buffer);
-});
+    stream.end(req.file.buffer);
+  });
 
-  server.all("*", (req, res) => {
+  // declaring routes for pages
+  expressApp.get('/', (req, res) => {
+    return app.render(req, res, '/', req.query)
+  })
+  expressApp.get('/record', (req, res) => {
+    return app.render(req, res, '/record', req.query)
+  })
+  expressApp.get('/predict', (req, res) => {
+    return app.render(req, res, '/predict', req.query)
+  })
+
+  // fallback route and send to nextjs req handler
+  expressApp.all("*", (req, res) => {
     return handle(req, res);
   });
 
-  server.listen(port, err => {
-    if (err) throw err;
-    console.log(`> Ready on http://localhost:${port}`);
-  });
+   // start the HTTP/2 server with express
+   spdy.createServer(options, expressApp).listen(port, error => {
+    if (error) {
+      console.error(error)
+      return process.exit(1)
+    } else {
+      console.log(`HTTP/2 server listening on port:${port} Ready at http://localhost:${port}`)
+    }
+  })
+
 });
